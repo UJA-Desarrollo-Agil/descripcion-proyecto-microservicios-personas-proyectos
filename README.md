@@ -33,4 +33,9 @@ Describimos brevemente los ficheros y directorios que se encuentran en todas las
 * ```callbacks.js```: fichero en el que se encuentran las funciones con las que se va a procesar la llamada a cada una de las rutas definidas en *routes.js*
 * ```spec```: directorio en el que se encuentran las pruebas a realizar con el entorno [Jasmine](https://jasmine.github.io/), para realizar TDD con JavaScript.
 * ```package.json```: fichero con la configuración de cada app, necesario para que *nodejs* pueda ejecutar el proyecto.
+* ```README.md```: fichero con la descripción de cada proyecto, el cual a su vez sirve como documentación del mismo.
+
+
+
+ ![Árbol de ficheros y directorios de una aplicación](./assets/img/estructura%20directorios%20y%20ficheros.png) 
  
