@@ -326,22 +326,6 @@ const CB_MODEL_SELECTS = {
             let response_personas = await fetch(url)
             let personas = await response_personas.json()
 
-            // Comprobaciones para ver qué almacenan los datos descargados
-            // y así poder usarlos en las expresiones
-            
-            /*
-            //console.log( "Proyectos: \n", proyectos ) // Para comprobar qué se ha devuelto en proyectos
-            //console.log( "Personas: \n", personas ) // Para comprobar qué se ha devuelto en personas
-            // para comprobar las personas dentro de cada proyecto
-            
-            proyectos.data.forEach(e => {
-                console.log( e.data )
-            });
-            // usando e.ref["@ref"].id puedo saber el id de cada objeto descargado con fetch
-            personas.data.forEach(e => {
-                console.log( e.ref["@ref"].id, e.data)
-            });
-            */
             // Incluyo los datos de cada persona que hay en el proyecto
             proyectos.data.forEach( pr=>{
                 // Creo un nuevo campo llamado datos_personas en cada proyecto
@@ -495,3 +479,107 @@ Las siguientes imágenes muestran: la BBDD creada (*Personas_Proyectos*), la col
 
 *Detalle de uno de los documentos dentro de la colección personas.*
 
+### Conectar a la BBBDD
+La conexión a Fauna es bastante fácil dado que existe un módulo para *node.js*. Lo único que necesitamos saber es el código secreto que nos muestra Fauna cuando creamos una BBDD.
+
+```
+/// Necesario para conectar a la BBDD
+const faunadb = require('faunadb'),
+    q = faunadb.query;
+
+const client_proyectos = new faunadb.Client({
+    secret: '**********',
+});
+```
+
+La definición de las constantes **cliente_proyectos** y **q** (o como deseemos llamarlas) son las que nos permiten realizar las consultas a la BBDD y obtener la respuesta. Dado que es una llamada a un servicio remoto, se realiza usando *await*, es decir, usando promesas.
+
+```
+let proyectos = await client_proyectos.query(
+                q.Map(
+                    q.Paginate(q.Documents(q.Collection("Proyectos"))),
+                    q.Lambda("X", q.Get(q.Var("X")))
+                )
+            )
+```
+
+Posiblemente los aspectos más complicados son los relacionados con el tratamiento del **id** de un documento y con la resolución de llamadas de un microservicio a otro. Los vemos a continuación.
+
+### Uso del identificador de un documento
+
+Al hacer una consulta a Fauna, el gestor de BBDD nos devuelve el conjunto de documentos que resuelven esa consulta. Cada documento es un objeto que, entre sus múltiples atributos, contiene uno de especial importancia denominado **ref**, el cual a su vez, incluye otro atributo denominado **@ref**. Pues bien, es este último atributo el que almacena el id del documento.
+
+Así, si hemos recuperado un proyecto de la base de datos, el identificador de dicho documento será: ```proyecto.ref["@ref"].id```. 
+
+Afortunadamente, es mucho más fácil hacer una consulta a la BBDD en la que obtengamos un documento a partir de su id. Concretamente, solo hay que hacer lo siguiente:
+
+```
+let persona = await client.query(
+            q.Get(q.Ref(q.Collection('Personas'), '354047338258366678'))
+)
+```
+
+### Llamadas de un microservicio a otro
+Dado que cada microservicio es responsable únicamente del acceso a *su* base de datos, si necesitamos "cruzar" datos entre ellos tendremos que realizar llamadas de un microservicio a otro.
+
+Un ejemplo lo encontramos en la aplicación cuando requerimos todos los proyectos y queremos, además, que se devuelvan los datos de cada una de las personas asociadas a ese proyecto.
+
+El código es el siguiente:
+
+```
+/**
+* Método para obtener todos los proyectos de la BBDD y, además, las personas que hay en cada proyecto
+* @param {*} req Objeto con los parámetros que se han pasado en la llamada a esta URL 
+* @param {*} res Objeto Response con las respuesta que se va a dar a la petición recibida
+*/
+getTodosConPersonas: async (req, res) => {
+    try {
+        let proyectos = await client_proyectos.query(
+            q.Map(
+                q.Paginate(q.Documents(q.Collection("Proyectos"))),
+                q.Lambda("X", q.Get(q.Var("X")))
+            )
+        )
+```
+        // LLAMADA AL OTRO MICROSERVICIO
+        let url=URL_MS_PERSONAS+"/getTodas"
+        let response_personas = await fetch(url)
+        let personas = await response_personas.json()
+```
+        // Incluyo los datos de cada persona que hay en el proyecto
+        proyectos.data.forEach( pr=>{
+            // Creo un nuevo campo llamado datos_personas en cada proyecto
+            pr.data.datos_personas=personas.data.filter( pe => 
+                pr.data.personas.join().includes( pe.ref["@ref"].id)
+            )
+        });
+
+        CORS(res)
+            .status(200)
+            .json(proyectos)
+    } catch (error) {
+        res.status(500).json({ error: error.description+"\n ¡¡COMPRUEBE QUE EL MS PERSONAS FUNCIONA CORRECTAMENTE" })
+    }
+},
+```
+En nuestro ejemplo, descargamos todos los proyectos y a continuación todas las personas:
+```
+    // LLAMADA AL OTRO MICROSERVICIO
+    let url=URL_MS_PERSONAS+"/getTodas"
+    let response_personas = await fetch(url)
+    let personas = await response_personas.json()
+```
+
+Y, posteriormente, vamos recorriendo cada proyecto para ver qué personas tiene asignadas:
+
+```
+    // Incluyo los datos de cada persona que hay en el proyecto
+    proyectos.data.forEach( pr=>{
+        // Creo un nuevo campo llamado datos_personas en cada proyecto
+        pr.data.datos_personas=personas.data.filter( pe => 
+            pr.data.personas.join().includes( pe.ref["@ref"].id)
+        )
+    });
+```
+
+No es necesariamente la forma más eficiente de hacerlo, pero funciona.
