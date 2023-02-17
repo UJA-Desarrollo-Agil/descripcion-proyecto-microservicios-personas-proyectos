@@ -7,6 +7,8 @@ La funcionalidad es muy simple: hay un conjunto de personas asignadas a un conju
 
 ![Pantalla de inicio de la aplicación](./assets/img/front-end-index.png)
 
+*Pantalla de inicio de la aplicación* &#8593;
+
 Esta aplicación de muestra está formada, a su vez, por 4 aplicaciones (=servidores) independientes:
 * Aplicación *front-end*
 * Aplicación *api-gateway*
@@ -21,7 +23,7 @@ Se respetan siempre las siguientes reglas básicas:
    
 ![Esquema de comunicación entre las distintas aplicaciones ](./assets/img/esquema-comunicacion-apps.png) 
 
-*Esquema de comunicación entre las distintas aplicaciones*
+*Esquema de comunicación entre las distintas aplicaciones.* &#8593;
 
 ## Ejecución de la aplicación
 
@@ -107,7 +109,7 @@ Describimos brevemente los ficheros y directorios que se encuentran en todas las
 
  ![Árbol de directorios yfichero de una de las aplicaciones](./assets/img/estructura%20directorios%20y%20ficheros.png) 
  
- *Árbol de directorios y ficheros de una de las aplicaciones*
+ *Árbol de directorios y ficheros de una de las aplicaciones* &#8593;
 
 ### Fichero ```server.js```
 Este fichero es el que se ejecuta al lanzar la aplicación y contiene apenas una líneas para configurar el servidor ([Express](https://expressjs.com/)) y dejarlo escuchando en el puerto seleccionado:
@@ -456,7 +458,7 @@ No obstante, para este ejemplo y por facilidad, hemos usado una BBDD NoSQL aloja
 
 ![Página de inicio del gestor de BBDD Fauna](./assets/img/fauna.png)
 
-*Página de inicio del gestor de BBDD Fauna.&#129045;*
+*Página de inicio del gestor de BBDD Fauna.&#8593;*
 
 Este gestor de BBDD permite ser usado gratuitamente y es muy intuitivo. Como cualquier en cualquier gestor NoSQL, cada base de datos contiene **colecciones** de **documentos**. Cada *documento* es un objeto en formato JSON y está identificado por un **id** único que le asigna el propio sistema al crearlo; de esta forma, es relativamente fácil acceder a cada uno de los documentos por su *id*.
 
@@ -464,20 +466,20 @@ Las siguientes imágenes muestran: la BBDD creada (*Personas_Proyectos*), la col
 
 ![Conjunto de Bases de Datos de mi usuario en Fauna](./assets/img/databases.png)
 
-*Conjunto de Bases de Datos de mi usuario en Fauna.*
+*Conjunto de Bases de Datos de mi usuario en Fauna.&#8593;*
 
 ![Colecciones dentro de la BBDD Personas-Proyectos](./assets/img/colecciones.png)
 
-*Colecciones dentro de la BBDD Personas-Proyectos.*
+*Colecciones dentro de la BBDD Personas-Proyectos.&#8593;*
 
 ![Documentos dentro de la colección Personas](./assets/img/coleccion-personas.png)
 
-*Documentos dentro de la colección Personas.*
+*Documentos dentro de la colección Personas.&#8593;*
 
 
 ![Detalle de uno de los documentos dentro de la colección personas](./assets/img/detalle-persona.png)
 
-*Detalle de uno de los documentos dentro de la colección personas.*
+*Detalle de uno de los documentos dentro de la colección personas.&#8593;*
 
 ### Conectar a la BBBDD
 La conexión a Fauna es bastante fácil dado que existe un módulo para *node.js*. Lo único que necesitamos saber es el código secreto que nos muestra Fauna cuando creamos una BBDD.
