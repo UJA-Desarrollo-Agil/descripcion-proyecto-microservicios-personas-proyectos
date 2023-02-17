@@ -23,6 +23,72 @@ Se respetan siempre las siguientes reglas básicas:
 
 *Esquema de comunicación entre las distintas aplicaciones*
 
+## Ejecución de la aplicación
+
+Más que hablar de ejecución de la aplicación deberíamos hablar de ejecución de **las aplicaciones**, dado que son 4.
+
+Para poder disfrutar de toda la funcionalidad de la aplicación, necesitamos abrir 4 consolas de línea de comandos. En cada una de ellas, tendremos que meternos en un directorio correspondiente a una aplicación y posteriormene ejecutar:
+```npm start```
+
+El resultado debería ser parecido a este:
+
+*Consola de front-end:*
+```
+front-end % npm start
+
+> front-end@1.0.0 start
+> node server.js
+
+Aplicación Front-End escuchando en puerto 8000!
+```
+
+*Consola de api-gateway:*
+```
+fapi-gateway % npm start
+
+> api-gateway@1.0.0 start
+> node server.js
+
+[HPM] Proxy created: /  -> http://localhost:8002
+[HPM] Proxy rewrite rule created: "^/personas" ~> ""
+[HPM] Proxy created: /  -> http://localhost:8003
+[HPM] Proxy rewrite rule created: "^/proyectos" ~> ""
+Aplicación API-Gateway escuchando en 8001!
+```
+
+*Consola de api-gateway:*
+```
+fapi-gateway % npm start
+
+> api-gateway@1.0.0 start
+> node server.js
+
+[HPM] Proxy created: /  -> http://localhost:8002
+[HPM] Proxy rewrite rule created: "^/personas" ~> ""
+[HPM] Proxy created: /  -> http://localhost:8003
+[HPM] Proxy rewrite rule created: "^/proyectos" ~> ""
+Aplicación API-Gateway escuchando en 8001!
+```
+*Consola de ms-personas:*
+```
+ms-personas % npm start
+
+> ms-personas@1.0.0 start
+> node server.js
+
+Microservicio PERSONAS ejecutándose en puerto 8002!
+```
+
+*Consola de ms-proyectos:*
+```
+ms-proyectos % npm start
+
+> ms-proyectos@1.0.0 start
+> node server.js
+
+Microservicio PROYECTOS ejecutándose en puerto 8003!
+```
+
 ## Organización del árbol de directorios de cada app
 
 Las 4 apps que forman el sistema completo tienen su código por separado y no comparten nada de dicho código.
@@ -398,5 +464,4 @@ La utilización de *async* y *await* facilita enormemente la programación con p
 Para profundizar más en la programación con promesas pueden usarse los siguientes enlaces:
 * [JavaScript Asíncrono](https://developer.mozilla.org/es/docs/Learn/JavaScript/Asynchronous)
 * [async and await](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Promises#async_and_await)
-
 
