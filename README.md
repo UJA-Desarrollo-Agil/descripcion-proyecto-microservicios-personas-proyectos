@@ -465,3 +465,32 @@ Para profundizar más en la programación con promesas pueden usarse los siguien
 * [JavaScript Asíncrono](https://developer.mozilla.org/es/docs/Learn/JavaScript/Asynchronous)
 * [async and await](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Promises#async_and_await)
 
+## La base de datos
+Para realizar la aplicación podríamos haber usado cualquier BBDD o incluso cualquier otro mecanismo para garantizar la persistencia (ficheros en el servidor, por ejemplo). De hecho, cada uno de los microservicios (*Personas* y *Proyectos*) podría haber usado un sistema distinto. Esto es así porque cada microservicio es independiente y gestiona la persistencia de datos como mejor le parece.
+
+No obstante, para este ejemplo y por facilidad, hemos usado una BBDD NoSQL alojada en la nube, concretamente [Fauna](https://fauna.com)
+![Página de inicio del gestor de BBDD Fauna](./assets/img/fauna.png)
+
+*Página de inicio del gestor de BBDD Fauna.*
+
+Este gestor de BBDD permite ser usado gratuitamente y es muy intuitivo. Como cualquier en cualquier gestor NoSQL, cada base de datos contiene **colecciones** de **documentos**. Cada *documento* es un objeto en formato JSON y está identificado por un **id** único que le asigna el propio sistema al crearlo; de esta forma, es relativamente fácil acceder a cada uno de los documentos por su *id*.
+
+Las siguientes imágenes muestran: la BBDD creada (*Personas_Proyectos*), la colección *Personas* y un documento dentro de ella.
+
+![Conjunto de Bases de Datos de mi usuario en Fauna](./assets/img/databases.png)
+
+*Conjunto de Bases de Datos de mi usuario en Fauna.*
+
+![Colecciones dentro de la BBDD Personas-Proyectos](./assets/img/colecciones.png)
+
+*Colecciones dentro de la BBDD Personas-Proyectos.*
+
+![Documentos dentro de la colección Personas](./assets/img/coleccion-personas.png)
+
+*Documentos dentro de la colección Personas.*
+
+
+![Detalle de uno de los documentos dentro de la colección personas](./assets/img/detalle-persona.png)
+
+*Detalle de uno de los documentos dentro de la colección personas.*
+
