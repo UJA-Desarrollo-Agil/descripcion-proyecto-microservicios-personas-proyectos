@@ -469,9 +469,10 @@ Para profundizar más en la programación con promesas pueden usarse los siguien
 Para realizar la aplicación podríamos haber usado cualquier BBDD o incluso cualquier otro mecanismo para garantizar la persistencia (ficheros en el servidor, por ejemplo). De hecho, cada uno de los microservicios (*Personas* y *Proyectos*) podría haber usado un sistema distinto. Esto es así porque cada microservicio es independiente y gestiona la persistencia de datos como mejor le parece.
 
 No obstante, para este ejemplo y por facilidad, hemos usado una BBDD NoSQL alojada en la nube, concretamente [Fauna](https://fauna.com)
+
 ![Página de inicio del gestor de BBDD Fauna](./assets/img/fauna.png)
 
-*Página de inicio del gestor de BBDD Fauna.*
+*Página de inicio del gestor de BBDD Fauna.&#129045;*
 
 Este gestor de BBDD permite ser usado gratuitamente y es muy intuitivo. Como cualquier en cualquier gestor NoSQL, cada base de datos contiene **colecciones** de **documentos**. Cada *documento* es un objeto en formato JSON y está identificado por un **id** único que le asigna el propio sistema al crearlo; de esta forma, es relativamente fácil acceder a cada uno de los documentos por su *id*.
 
