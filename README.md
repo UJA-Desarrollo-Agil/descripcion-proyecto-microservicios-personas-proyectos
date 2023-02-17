@@ -19,7 +19,9 @@ Se respetan siempre las siguientes reglas básicas:
 3. La aplicación *api-gateway* recibe peticiones de *front-end* y las deriva al microservicio correspondiente. El servicio resuelve la petición y envía el resultado a la aplicación *front-end* a través de *api-gateway*
 4. Los microservicios interactúan con una BBDD (posiblemente distinta para cada microservicio), con *api-gateway* y también entre ellos.
    
-![Esquema de comunicación entre las distintas aplicaciones ](./assets/img/esquema-comunicacion-apps.png)  
+![Esquema de comunicación entre las distintas aplicaciones ](./assets/img/esquema-comunicacion-apps.png) 
+
+*Esquema de comunicación entre las distintas aplicaciones*
 
 ## Organización del árbol de directorios de cada app
 
@@ -37,5 +39,364 @@ Describimos brevemente los ficheros y directorios que se encuentran en todas las
 
 
 
- ![Árbol de ficheros y directorios de una aplicación](./assets/img/estructura%20directorios%20y%20ficheros.png) 
+ ![Árbol de directorios yfichero de una de las aplicaciones](./assets/img/estructura%20directorios%20y%20ficheros.png) 
  
+ *Árbol de directorios y ficheros de una de las aplicaciones*
+
+### Fichero ```server.js```
+Este fichero es el que se ejecuta al lanzar la aplicación y contiene apenas una líneas para configurar el servidor ([Express](https://expressjs.com/)) y dejarlo escuchando en el puerto seleccionado:
+
+```
+/**
+ * @file server.js
+ * @description Define el servidor que aceptará las peticiones para el MS Proyectos
+ * @author Víctor M. Rivas <vrivas@ujaen.es>
+ * @date 03-feb-2023
+ */
+const express = require("express");
+const routes = require("./routes");
+const app = express();
+const port = 8003;
+app.use("/", routes);
+
+
+app.listen(port, () => {
+    console.log(`Microservicio PROYECTOS ejecutándose en puerto ${port}!`);
+});
+
+
+module.exports = app
+```
+*Ejemplo de fichero ```server.js``` del microservicio Proyectos*
+
+Hay que tener en cuenta que en la aplicación *api-gateway* este fichero NO EXISTE, y en su lugar se define un objeto *proxy* que redirige las llamadas a los distintos microservicios. 
+
+### Fichero ```routes.js```
+Como se observa en el fichero ```server.js```, el servidor hace uso del módulo *routes* el cual define las rutas (paths, URLs) a los que nuestro servidor va a responder.
+
+En el caso de la aplicación *api-gateway* este fichero ```routes.js``` no existe, y en su lugar se utiliza un fichero ```proxy-routes.js``` en el que se indican las reglas que debe seguir el *proxy* para redirigir las llamadas que le llegan.
+
+```
+/**
+ * @file routes.js
+ * @description Define las rutas ante las que va a responder el MS Proyectos
+ * @author Víctor M. Rivas <vrivas@ujaen.es>
+ * @date 03-feb-2023
+ */
+const express = require("express");
+const router = express.Router();
+const { callbacks } = require("./callbacks");
+
+
+/**
+ * Ruta raíz: /
+ */
+router.get("/", async (req, res) => {
+    try {
+        await callbacks.home(req, res)
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+/**
+ * Ruta Acerca De (es decir, About...)
+ */
+router.get("/acercade", async (req, res) => {
+    try {
+        await callbacks.acercaDe(req, res)
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
+
+/**
+ * Test de conexión a la BBDD
+ */
+router.get("/test_db", async (req, res) => {
+    try {
+        await callbacks.test_db(req, res)
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+/**
+ * Devuelve todas las personas que hay en la BBDD
+ */
+router.get("/getTodos", async (req, res) => {
+    try {
+        await callbacks.getTodos(req, res)
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
+// Devuelve todos los proyectos que hay en la BBDD añadiendo las personas que participan
+router.get("/getTodosConPersonas", async (req, res) => {
+    try {
+        await callbacks.getTodosConPersonas(req, res)
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
+
+// Exporto el módulo para poder usarlo en server
+module.exports = router;
+```
+*Ejemplo del fichero ```routes.js``` del microservicio Proyectos*
+
+Como se observa en el ejemplo, este fichero define todas las rutas que se van a poder procesar y delega en un método del objeto *callbacks* el conjunto de acciones a realizar. El objeto *callbacks* es por tanto fundamental para que se ejecuta realmente la funcionalidad que el usuario espera.
+
+### Fichero ```callbacks.js```
+Finalmente, este fichero define un objeto importantísimo dado que contiene las constantes y métodos que se van a usar para resolver las llamadas que el usuario está realizando a través de las conexiones que realiza mediante su navegador de páginas web.
+
+Estos métodos son precisamente los encargados de conectar con la base de datos, por lo que son los que permiten recuperar y almacenar datos en la misma.
+
+```
+/**
+ * @file callbacks.js 
+ * @description  Callbacks para MS Proyectos.
+ * Los callbacks son las funciones que se llaman cada vez que se recibe una petición a través de la API.
+ * Las peticiones se reciben en las rutas definidas en routes.js, pero se procesan aquí.
+ * @author Víctor M. Rivas <vrivas@ujaen.es>
+ * @date 03-feb-2023
+ */
+
+/// Necesario para solicitar datos a otro ms
+const fetch = require("node-fetch"); 
+
+/// Dirección del ms personas, necesario para ms proyectos
+const URL_MS_PERSONAS = "http://localhost:8002";
+
+/// Necesario para conectar a la BBDD
+const faunadb = require('faunadb'),
+    q = faunadb.query;
+
+const client_proyectos = new faunadb.Client({
+    secret: '**********',
+});
+
+
+/**
+ * Función que permite servir llamadas sin importar el origen:
+ * CORS significa Cross-Origin Resource Sharing
+ * Dado un objeto de tipo respuesta, le añade las cabeceras necesarias para realizar CROS
+ * @param {*} res Objeto de tipo response 
+ * @returns Devuelve el mismo objeto para concatenar varias llamadas al mismo
+ */
+function CORS(res) {
+    res.header('Access-Control-Allow-Origin', '*')
+        .header(
+            'Access-Control-Allow-Headers',
+            'Origin, X-Requested-With, Content-Type, Accept'
+        )
+    return res;
+}
+
+
+/**
+ * Objeto que contiene las funciones callback para interactuar con el modelo (e.d., la BBDD)
+ */
+const CB_MODEL_SELECTS = {
+    /**
+     * Prueba de conexión a la BBDD: devuelve todas los proyectos que haya en la BBDD.
+     * @param {*} req Objeto con los parámetros que se han pasado en la llamada a esta URL 
+     * @param {*} res Objeto Response con las respuesta que se va a dar a la petición recibida
+     */
+    test_db: async (req, res) => {
+        try {
+            let proyectos = await client_proyectos.query(
+                q.Map(
+                    q.Paginate(q.Documents(q.Collection("Proyectos"))),
+                    q.Lambda("X", q.Get(q.Var("X")))
+                )
+            )
+            res.status(200).json(proyectos)
+        } catch (error) {
+            res.status(500).json({ error: error.description })
+        }
+    },
+    /**
+     * Método para obtener todos los proyectos de la BBDD.
+     * @param {*} req Objeto con los parámetros que se han pasado en la llamada a esta URL 
+     * @param {*} res Objeto Response con las respuesta que se va a dar a la petición recibida
+     */
+    getTodos: async (req, res) => {
+        try {
+            let proyectos = await client_proyectos.query(
+                q.Map(
+                    q.Paginate(q.Documents(q.Collection("Proyectos"))),
+                    q.Lambda("X", q.Get(q.Var("X")))
+                )
+            )
+            // console.log( proyectos ) // Para comprobar qué se ha devuelto en proyectos
+            CORS(res)
+                .status(200)
+                .json(proyectos)
+        } catch (error) {
+            res.status(500).json({ error: error.description })
+        }
+    },
+    /**
+     * Método para obtener todos los proyectos de la BBDD y, además, las personas que hay en cada proyecto
+     * @param {*} req Objeto con los parámetros que se han pasado en la llamada a esta URL 
+     * @param {*} res Objeto Response con las respuesta que se va a dar a la petición recibida
+     */
+    getTodosConPersonas: async (req, res) => {
+        try {
+            let proyectos = await client_proyectos.query(
+                q.Map(
+                    q.Paginate(q.Documents(q.Collection("Proyectos"))),
+                    q.Lambda("X", q.Get(q.Var("X")))
+                )
+            )
+            let url=URL_MS_PERSONAS+"/getTodas"
+            let response_personas = await fetch(url)
+            let personas = await response_personas.json()
+
+            // Comprobaciones para ver qué almacenan los datos descargados
+            // y así poder usarlos en las expresiones
+            
+            /*
+            //console.log( "Proyectos: \n", proyectos ) // Para comprobar qué se ha devuelto en proyectos
+            //console.log( "Personas: \n", personas ) // Para comprobar qué se ha devuelto en personas
+            // para comprobar las personas dentro de cada proyecto
+            
+            proyectos.data.forEach(e => {
+                console.log( e.data )
+            });
+            // usando e.ref["@ref"].id puedo saber el id de cada objeto descargado con fetch
+            personas.data.forEach(e => {
+                console.log( e.ref["@ref"].id, e.data)
+            });
+            */
+            // Incluyo los datos de cada persona que hay en el proyecto
+            proyectos.data.forEach( pr=>{
+                // Creo un nuevo campo llamado datos_personas en cada proyecto
+                pr.data.datos_personas=personas.data.filter( pe => 
+                    pr.data.personas.join().includes( pe.ref["@ref"].id)
+                )
+            });
+            
+            CORS(res)
+                .status(200)
+                .json(proyectos)
+        } catch (error) {
+            res.status(500).json({ error: error.description+"\n ¡¡COMPRUEBE QUE EL MS PERSONAS FUNCIONA CORRECTAMENTE" })
+        }
+    },
+}
+
+
+
+/**
+ * Callbacks adicionales. Fundamentalmente para comprobar que el ms funciona.
+ */
+const CB_OTHERS = {
+    /**
+     * Devuelve un mensaje indicando que se ha accedido a la home del microservicio
+     * @param {*} req Objeto con los parámetros que se han pasado en la llamada a esta URL 
+     * @param {*} res Objeto Response con las respuesta que se va a dar a la petición recibida
+     */
+    home: async (req, res) => {
+        try {
+            res.status(200).json({mensaje: "Microservicio Proyectos: home"});
+        } catch (error) {
+            res.status(500).json({ error: error.description })
+        }
+    },
+    /**
+     * Devuelve un mensaje indicando que se ha accedido a la información Acerca De del microservicio
+     * @param {*} req Objeto con los parámetros que se han pasado en la llamada a esta URL 
+     * @param {*} res Objeto Response con las respuesta que se va a dar a la petición recibida
+     */
+    acercaDe: async (req, res) => {
+        try {
+            res.status(200).json({
+                mensaje: "Microservicio Proyectos: acerca de",
+                autor: "Víctor Manuel Rivas Santos",
+                email: "vrivas@ujaen.es",
+                fecha: "febrero, 2023"
+            });
+        } catch (error) {
+            res.status(500).json({ error: error.description })
+        }
+    },
+
+}
+
+// Une todos los callbacks en un solo objeto.
+// OJO: No debe haber callbacks con el mismo nombre en los distintos objetos, porque si no
+// el último que haya sobreescribe a todos los anteriores.
+exports.callbacks = { ...CB_MODEL_SELECTS, ...CB_OTHERS }
+
+
+//CB_MODEL_SELECTS.getTodosConPersonas() // Para depuración
+```
+
+*Ejemplo de fichero ```callbacks.js``` del microservicio Proyectos*
+
+**Es muy importante** notar que todos los métodos definidos en *callbacks* devuelven única y exclusivamente JSON. Los datos así devueltos se envían a la aplicación *front-end* que es la que tiene que procesarlos para mostrarlos al cliente.
+
+### Las palabras reservadas *async* y *await*
+
+Como se puede observar tanto en los *callbacks* como en *routes*, la inmensa mayoría de los métodos están definidos usando las palabras reservadas *async* y *await*:
+
+```
+// Dentro del fichero routes.js
+// =============================
+
+// Devuelve todos los proyectos que hay en la BBDD añadiendo las personas que participan
+router.get("/getTodosConPersonas", async (req, res) => {
+    try {
+        await callbacks.getTodosConPersonas(req, res)
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+----------------------------------------------
+
+// Dentro del fichero callbacks.js
+// ===============================
+
+/**
+* Prueba de conexión a la BBDD: devuelve todas los proyectos que haya en la BBDD.
+* @param {*} req Objeto con los parámetros que se han pasado en la llamada a esta URL 
+* @param {*} res Objeto Response con las respuesta que se va a dar a la petición recibida
+*/
+test_db: async (req, res) => {
+    try {
+        let proyectos = await client_proyectos.query(
+            q.Map(
+                q.Paginate(q.Documents(q.Collection("Proyectos"))),
+                q.Lambda("X", q.Get(q.Var("X")))
+            )
+        )
+        res.status(200).json(proyectos)
+    } catch (error) {
+        res.status(500).json({ error: error.description })
+    }
+},
+```
+
+Ambas palabras reservadas permiten trabajar mucho más cómodamente con "promesas" ([promise]()https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). Una promesa se define como:
+> Una promesa es un objeto que representa la *eventual* resolución (con éxito o no) de una operación asíncrona, así como el valor devuelto por dicha operación.
+
+En esencia, una promesa es una operación que se lanza y que NO detiene la ejecución del programa, pero que se queda "escuchando" hasta que recibe una respuesta. Normalmente se utilizan para solicitar datos a servicios remotos, de modo que la promesa lanza la llamada y, cuando llega el resultado, lo procesa. Mientras tanto, la aplicación sigue recibiendo peticiones y contestando a las mismas.
+
+La utilización de *async* y *await* facilita enormemente la programación con promesas, dando al programador/a la sensación de que su código es secuencial (mucho más fácil de escribir), aunque en realidad está lanzando procesos asíncronos en paralelo.
+
+*Lo más reseñable* del uso de estas dos palabras reservadas es que: **el operador _await_ solo puede usarse dentro de funciones o métodos que hayan sido declarados como _async_**.
+
+Para profundizar más en la programación con promesas pueden usarse los siguientes enlaces:
+* [JavaScript Asíncrono](https://developer.mozilla.org/es/docs/Learn/JavaScript/Asynchronous)
+* [async and await](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Promises#async_and_await)
+
+
