@@ -93,14 +93,14 @@ Microservicio PROYECTOS ejecutándose en puerto 8003!
 
 ## Organización del árbol de directorios de cada app
 
-Las 4 apps que forman el sistema completo tienen su código por separado y no comparten nada de dicho código.
+Las cuatro apps que forman el sistema completo tienen su código por separado y no comparten nada de dicho código.
 
-No obstante, todas ellas tienen un conjunto de directorios y de ficheros con nombres idénticos (aunque con contenidos distintos).
+No obstante, todas tres de ellas (*ms-proyectos*, *ms-personas* y *front-end*) tienen un conjunto de directorios y de ficheros con nombres idénticos (aunque con contenidos distintos). Solo la app *api-gateway* es un poco distinta, por el hecho de que se limita a redireccionar las llamadas que le llegan enviándolas al microservicio correspondiente.
 
-Describimos brevemente los ficheros y directorios que se encuentran en todas las apps:
-* ```server.js```: fichero en el que se declara el objeto ```app```, el cual hace las veces de servidor web; es decir, recibe llamadas a través del protocolo *http* y devuelve un resultado que puede ser en JSON o como fichero HTML. Las 4 aplicaciones desarrolladas utilizan la biblioteca [Express](https://expressjs.com/) para [Node.js](https://nodejs.org/en/).
-* ```routes.js```: fichero en el que se declaran las rutas que se van a atender dentro de la llamada *http* que se está realizando.
-* ```callbacks.js```: fichero en el que se encuentran las funciones con las que se va a procesar la llamada a cada una de las rutas definidas en *routes.js*
+Describimos brevemente los ficheros y directorios que se encuentran en estas apps:
+* ```server.js```: fichero en el que se declara el objeto ```app```, el cual hace las veces de servidor web; es decir, recibe llamadas a través del protocolo *http* y devuelve un resultado que puede ser en JSON o como fichero HTML (este formato solo lo devuelve la app *front-end*). Las cuatro aplicaciones desarrolladas utilizan la biblioteca [Express](https://expressjs.com/) para [Node.js](https://nodejs.org/en/).
+* ```routes.js```: fichero en el que se declaran las rutas que se van a atender dentro de la llamada *http* que se está realizando. En la aplicación *api-gateway* este fichero cambia su nombre a ```proxy-routes.js```.
+* ```callbacks.js```: fichero en el que se encuentran las funciones con las que se va a procesar la llamada a cada una de las rutas definidas en *routes.js*. El fichero ```calbacks.js``` **no existe** en la aplicación *api-gateway* dado que no es necesario que esta aplicación genere ni procese resultados; solamente reenvía lo que recibe hacia y desde el *fron-end* hacia los microservicios.
 * ```spec```: directorio en el que se encuentran las pruebas a realizar con el entorno [Jasmine](https://jasmine.github.io/), para realizar TDD con JavaScript.
 * ```package.json```: fichero con la configuración de cada app, necesario para que *nodejs* pueda ejecutar el proyecto.
 * ```README.md```: fichero con la descripción de cada proyecto, el cual a su vez sirve como documentación del mismo.
@@ -110,6 +110,8 @@ Describimos brevemente los ficheros y directorios que se encuentran en todas las
  ![Árbol de directorios yfichero de una de las aplicaciones](./assets/img/estructura%20directorios%20y%20ficheros.png) 
  
  *Árbol de directorios y ficheros de una de las aplicaciones* &#8593;
+
+Pasemos a ver alguno de estos ficheros con algo más de detalle.
 
 ### Fichero ```server.js```
 Este fichero es el que se ejecuta al lanzar la aplicación y contiene apenas una líneas para configurar el servidor ([Express](https://expressjs.com/)) y dejarlo escuchando en el puerto seleccionado:
