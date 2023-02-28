@@ -2,6 +2,7 @@
 
 Esta aplicación se hace para explicar cómo vamos a implementar los microservicios en las prácticas de Desarrollo Ágil, para el curso 2022-2023.
 
+Se puede ver una explicación más detallada en el vídeo: https://youtu.be/Euh2YLOad6Q .
 ## Funcionamiento básico de la aplicación
 La funcionalidad es muy simple: hay un conjunto de personas asignadas a un conjunto de proyectos (de software). Y la aplicación permite listar tanto las personas que hay como los proyectos, así como modificar los datos de las personas.
 
