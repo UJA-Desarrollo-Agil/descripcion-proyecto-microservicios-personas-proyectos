@@ -1,4 +1,4 @@
-# Descripción de la aplicación PERSONAS-PROYECTOS basada en MICROSERVICIOS
+# Descripción de la aplicación <br/> PERSONAS-PROYECTOS <br/> basada en MICROSERVICIOS
 
 Esta aplicación se hace para explicar cómo vamos a implementar los microservicios en las prácticas de Desarrollo Ágil, para el curso 2022-2023.
 
