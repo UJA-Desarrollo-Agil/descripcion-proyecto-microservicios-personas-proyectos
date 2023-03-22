@@ -2,7 +2,21 @@
 
 Esta aplicación se hace para explicar cómo vamos a implementar los microservicios en las prácticas de Desarrollo Ágil, para el curso 2022-2023.
 
+## Vídeo explicativo
+
 Se puede ver una explicación más detallada en el vídeo: https://youtu.be/Euh2YLOad6Q .
+
+Lo he dividido en varios apartados:
+* Inicio: https://youtu.be/Euh2YLOad6Q?t=1
+* Funcionalidad básica de la aplicación: https://youtu.be/Euh2YLOad6Q?t=38
+* Arquitectura de la aplicación: https://youtu.be/Euh2YLOad6Q?t=192
+* Ejecución de la aplicación: https://youtu.be/Euh2YLOad6Q?t=435
+* Contenido de los directorios: https://youtu.be/Euh2YLOad6Q?t=556
+* Procesando la información en el front-end: https://youtu.be/Euh2YLOad6Q?t=1264
+* Enviando información con POST: https://youtu.be/Euh2YLOad6Q?t=2116
+
+## Repositorios de los distintos componentes
+
 
 Los repositorios desde los que se pueden descargar las 4 aplicaciones que forman el sistema total son:
 
