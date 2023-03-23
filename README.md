@@ -2,9 +2,8 @@
 
 Esta aplicación se hace para explicar cómo vamos a implementar los microservicios en las prácticas de Desarrollo Ágil, para el curso 2022-2023.
 
-## Vídeo explicativo
-
-Se puede ver una explicación más detallada en el vídeo: https://youtu.be/Euh2YLOad6Q .
+## Vídeo explicativo de la aplicación
+Se puede ver una explicación más detallada de cómo se ha realizado la aplicación en el vídeo: https://youtu.be/Euh2YLOad6Q .
 
 Lo he dividido en varios apartados:
 * Inicio: https://youtu.be/Euh2YLOad6Q?t=1
@@ -14,6 +13,11 @@ Lo he dividido en varios apartados:
 * Contenido de los directorios: https://youtu.be/Euh2YLOad6Q?t=556
 * Procesando la información en el front-end: https://youtu.be/Euh2YLOad6Q?t=1264
 * Enviando información con POST: https://youtu.be/Euh2YLOad6Q?t=2116
+
+## Vídeo explicativo de depuración de código en JavaScript
+Para aquellas personas que no estén acostumbradas a desarrollo en JavaScript, os dejo un vídeo sobre cómo se puede depurar código tanto en el servidor como en el cliente.
+
+https://youtu.be/qWM86MDluM4
 
 ## Repositorios de los distintos componentes
 
