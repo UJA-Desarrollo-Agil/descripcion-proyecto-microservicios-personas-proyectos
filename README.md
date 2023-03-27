@@ -3,16 +3,18 @@
 Esta aplicación se hace para explicar cómo vamos a implementar los microservicios en las prácticas de Desarrollo Ágil, para el curso 2022-2023.
 
 ## Vídeo explicativo de la aplicación
-Se puede ver una explicación más detallada de cómo se ha realizado la aplicación en el vídeo: https://youtu.be/Euh2YLOad6Q .
+Se puede ver una explicación más detallada de cómo se ha realizado la aplicación en el vídeo: [https://youtu.be/Euh2YLOad6Q](https://youtu.be/idHg-dnImWM) .
 
 Lo he dividido en varios apartados:
-* Inicio: https://youtu.be/Euh2YLOad6Q?t=1
-* Funcionalidad básica de la aplicación: https://youtu.be/Euh2YLOad6Q?t=38
-* Arquitectura de la aplicación: https://youtu.be/Euh2YLOad6Q?t=192
-* Ejecución de la aplicación: https://youtu.be/Euh2YLOad6Q?t=435
-* Contenido de los directorios: https://youtu.be/Euh2YLOad6Q?t=556
-* Procesando la información en el front-end: https://youtu.be/Euh2YLOad6Q?t=1264
-* Enviando información con POST: https://youtu.be/Euh2YLOad6Q?t=2116
+* Inicio: [https://youtu.be/Euh2YLOad6Q?t=1](https://youtu.be/idHg-dnImWM?t=1)
+* Funcionalidad básica de la aplicación: [https://youtu.be/Euh2YLOad6Q?t=38](https://youtu.be/idHg-dnImWM?t=38)
+* Arquitectura de la aplicación: [https://youtu.be/Euh2YLOad6Q?t=192](https://youtu.be/idHg-dnImWM?192)
+* Ejecución de la aplicación: [https://youtu.be/Euh2YLOad6Q?t=435](https://youtu.be/idHg-dnImWM?t=435)
+* Contenido de los directorios: [https://youtu.be/Euh2YLOad6Q?t=556](https://youtu.be/idHg-dnImWM?t=556)
+* Procesando la información en el front-end: [https://youtu.be/Euh2YLOad6Q?t=1264](https://youtu.be/idHg-dnImWM?t=1264)
+* Enviando información con POST: [https://youtu.be/Euh2YLOad6Q?t=2116](https://youtu.be/idHg-dnImWM?t=2116)
+* Realizando TDD en el servidor: [https://youtu.be/idHg-dnImWM?t=2586](https://youtu.be/idHg-dnImWM?t=2586)
+* Realizando TDD en el cliente:[https://youtu.be/idHg-dnImWM?t=3254](https://youtu.be/idHg-dnImWM?t=3254)
 
 ## Vídeo explicativo de depuración de código en JavaScript
 Para aquellas personas que no estén acostumbradas a desarrollo en JavaScript, os dejo un vídeo sobre cómo se puede depurar código tanto en el servidor como en el cliente.
